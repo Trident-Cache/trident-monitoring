@@ -66,6 +66,29 @@ static_configs:
 | Compression & Backend | Compression Ratio, Bytes Saved, Backend Health, Connections, Errors |
 | Memory Breakdown | Per-component memory (bodies, headers, keys, tags, overhead), Tracked vs Untracked, Allocator stats, Evictions |
 
+## Security
+
+Trident's metrics endpoint (`/metrics`) has **no authentication**. It exposes operational data such as cache hit rates, memory usage, backend health, and request counts. Always bind it to `127.0.0.1` — never expose it to the public internet.
+
+```toml
+# Correct — localhost only
+[metrics]
+address = "127.0.0.1:9190"
+
+# WRONG — accessible from anywhere
+# address = "0.0.0.0:9190"
+```
+
+The same applies to the admin API:
+
+```toml
+[admin]
+address = "127.0.0.1:9301"
+auth_token = "your-secret-token"
+```
+
+If you need to access metrics remotely, use an SSH tunnel or place them behind a reverse proxy with authentication (see the [Trident documentation](https://github.com/Trident-Cache/trident-cache) for examples).
+
 ## Requirements
 
 - Trident 1.0.5+ (for full metrics support)
